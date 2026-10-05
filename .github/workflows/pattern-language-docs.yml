@@ -1,0 +1,94 @@
+name: Update Pattern Language Documentation
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+  repository_dispatch:
+    types: [update_pl_docs]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  generate:
+    name: Update Pattern Language libraries
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout documentation
+        uses: actions/checkout@v7
+
+      - name: Download ImHex AppImage
+        id: imhex
+        env:
+          GH_TOKEN: ${{ secrets.IMHEX_ARTIFACT_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          set -x
+          mkdir -p ./imhex-download
+
+          run_id="$(gh run list \
+            --repo WerWolv/ImHex \
+            --workflow build.yml \
+            --branch master \
+            --event push \
+            --status success \
+            --limit 1 \
+            --json databaseId \
+            --jq '.[0].databaseId')" || run_id=""
+
+          if [[ -z "${run_id}" ]] || ! gh run download "${run_id}" \
+            --repo WerWolv/ImHex \
+            --name "Linux AppImage x86_64" \
+            --dir ./imhex-download; then
+            echo "Latest build artifact unavailable; downloading the nightly AppImage."
+            nightly_url="$(curl --fail --silent --show-error \
+              https://api.github.com/repos/WerWolv/ImHex/releases/tags/nightly \
+              | jq -r '.assets[] | select(.name | endswith("-x86_64.AppImage")) | .browser_download_url')"
+            if [[ -z "${nightly_url}" ]]; then
+              echo "The nightly release does not contain an x86_64 AppImage." >&2
+              exit 1
+            fi
+            curl --fail --location \
+              --output ./imhex-download/nightly-x86_64.AppImage \
+              "${nightly_url}"
+          fi
+
+          appimage="$(find ./imhex-download -type f -name '*-x86_64.AppImage' -print -quit)"
+          if [[ -z "${appimage}" ]]; then
+            echo "No x86_64 ImHex AppImage was downloaded." >&2
+            exit 1
+          fi
+
+          chmod +x "${appimage}"
+          appimage="$(realpath "${appimage}")"
+          echo "path=${appimage}" >> "${GITHUB_OUTPUT}"
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes libfuse2t64 libopengl0
+
+      - name: Generate documentation
+        run: |
+          git clone --depth 1 https://github.com/WerWolv/ImHex-Patterns
+          python3 scripts/generate_pattern_language_docs.py \
+            --imhex "${{ steps.imhex.outputs.path }}" \
+            --patterns ./ImHex-Patterns
+
+      - name: Verify generated documentation
+        if: github.event_name == 'pull_request'
+        run: git diff --exit-code -- content/docs/pattern-language/libraries
+
+      - name: Commit generated documentation
+        if: github.event_name != 'pull_request'
+        uses: EndBug/add-and-commit@v10
+        with:
+          add: ./content/docs/pattern-language/libraries
+          message: Updated Pattern Language Libraries documentation
+          committer_name: GitHub Actions
+          committer_email: 41898282+github-actions[bot]@users.noreply.github.com

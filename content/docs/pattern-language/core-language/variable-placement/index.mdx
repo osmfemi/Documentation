@@ -1,0 +1,54 @@
+---
+title: "Variable Placement"
+description: "Placing variables at a specific address into memory."
+published: true
+toc:
+  visible: true
+---
+## Variable Placement
+
+In order for the runtime to start decoding data, variables need to be placed somewhere in the binary data. To do this the variable placement syntax is used:
+
+```rust
+u32 myPlacedVariable @ 0x110;
+```
+
+This creates a new unsigned 32 bit variable named `myPlacedVariable` and places it at address `0x110`.
+
+The runtime will now treat the 4 bytes starting at offset `0x110` as a u32 and decodes the bytes at this address accordingly.
+
+<DocumentedImage src="/assets/pattern-language/core-language/variable-placement/placement-data.png" alt="Screenshot" />
+
+<DocumentedImage src="/assets/pattern-language/core-language/variable-placement/placement-hex.png" alt="Screenshot" />
+
+Placing variables isn’t limited to just built-in types. All types, even custom ones like structs, enums, unions, etc, can be placed.
+
+### Global variables
+
+Sometimes it’s necessary to store data globally while the pattern is running. For this global variables can be used. The syntax is the same as with placed variables but without the _@_ placement instruction at the end.
+
+```rust
+u32 globalVariable;
+```
+
+Let's see an example:
+
+```rust
+u8 lastValue; // A global variable
+
+fn setLastValue(u8 value) {
+    lastValue = value;
+};
+
+struct Test {
+    u8 value;
+	
+    setLastValue(value);
+}; 
+
+Test test[10] @ 0x00;
+```
+
+### Calculated pointers
+
+The same placement syntax may also be used inside of structs to specify where patterns are supposed to be placed in memory. These variables do not contribute to the overall size of the struct they are placed within.

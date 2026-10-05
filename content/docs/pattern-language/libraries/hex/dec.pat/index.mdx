@@ -1,0 +1,124 @@
+---
+title: "dec"
+description: "Documentation for dec."
+published: true
+toc:
+  visible: true
+---
+Library to allow decoding of more complex values
+
+
+## Functions
+
+### `hex::dec::demangle`
+
+Demangles a mangled name into a human readable name
+- `mangled_name`: The mangled name
+- `return`: The demangled name
+
+
+```pl
+fn demangle(str mangled_name);
+```
+
+### `hex::dec::zlib_decompress`
+
+Decompresses the bytes of a pattern into a section using the zlib algorithm
+- `pattern`: The pattern whose bytes should be decompressed
+- `section`: The section to decompress the data into
+- `window_size`: The window size passed to zlib
+- `return`: A value representing either the number of bytes decompressed or an error code from zlib
+
+
+```pl
+fn zlib_decompress(auto pattern, std::mem::Section section, u64 window_size);
+```
+
+### `hex::dec::bzip_decompress`
+
+Decompresses the bytes of a pattern into a section using the bzip algorithm
+- `pattern`: The pattern whose bytes should be decompressed
+- `section`: The section to decompress the data into
+- `return`: true if successful, false otherwise
+
+
+```pl
+fn bzip_decompress(auto pattern, std::mem::Section section);
+```
+
+### `hex::dec::lzma_decompress`
+
+Decompresses the bytes of a pattern into a section using the LZMA algorithm
+- `pattern`: The pattern whose bytes should be decompressed
+- `section`: The section to decompress the data into
+- `return`: true if successful, false otherwise
+
+
+```pl
+fn lzma_decompress(auto pattern, std::mem::Section section);
+```
+
+### `hex::dec::zstd_decompress`
+
+Decompresses the bytes of a pattern into a section using the zstd algorithm
+- `pattern`: The pattern whose bytes should be decompressed
+- `section`: The section to decompress the data into
+- `return`: true if successful, false otherwise
+
+
+```pl
+fn zstd_decompress(auto pattern, std::mem::Section section);
+```
+
+### `hex::dec::lz4_decompress`
+
+Decompresses the bytes of a pattern into a section using the lz4 algorithm
+- `pattern`: The pattern whose bytes should be decompressed
+- `section`: The section to decompress the data into
+- `frame`: Whether the data is framed or not
+- `return`: true if successful, false otherwise
+
+
+```pl
+fn lz4_decompress(auto pattern, std::mem::Section section, bool frame);
+```
+
+### `hex::dec::lzf_decompress`
+
+Decompresses the bytes of a pattern into a section using the LZF algorithm.
+The original algorithm implementation can be found at http://software.schmorp.de/pkg/liblzf.html (use the Wayback Machine if the link is currently unavailable).
+- `pattern`: The pattern whose bytes should be decompressed
+- `section`: The section to decompress the data into
+- `return`: The number of bytes read from the input if successful, 0 otherwise
+
+
+```pl
+fn lzf_decompress(auto pattern, std::mem::Section section);
+```
+
+### `hex::dec::decode`
+
+Decodes a byte sequence into a string using a custom Thingy encoding definition
+- `bytes`: The bytes to decode
+- `encoding`: A string containing a Thingy encoding definition, e.g. as loaded through std::file
+- `return`: The decoded string
+
+
+```pl
+fn decode(auto bytes, str encoding);
+```
+
+### `hex::dec::encode`
+
+Encodes a string into a byte sequence using a custom Thingy encoding definition.
+Throws an error if the encoding is ambiguous (multiple byte sequences decoding to the
+same value, or one decoded value being a prefix of another one), or if the string
+contains a character sequence that has no representation in the given encoding.
+- `string`: The string to encode
+- `encoding`: A string containing a Thingy encoding definition, e.g. as loaded through std::file
+- `return`: A string containing the raw encoded bytes (not necessarily valid text)
+
+
+```pl
+fn encode(str string, str encoding);
+```

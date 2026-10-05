@@ -1,0 +1,33 @@
+---
+title: "byte"
+description: "Documentation for byte."
+published: true
+toc:
+  visible: true
+---
+Types to display single bytes using various different representations
+
+
+## Types
+
+### `type::Bits`
+
+Type visualizing the value of each individual bit
+
+```pl
+bitfield Bits { ... } [[format(...), bitfield_order(...)]];
+```
+### `type::Byte`
+
+Type representing a single Byte. Decodes the byte as it's hexadecimal value, individual bits and nibbles
+
+```pl
+union Byte { ... } [[format(...), single_color]];
+```
+### `type::Nibbles`
+
+Type visualizing the value of the two nibbles
+
+```pl
+bitfield Nibbles { ... } [[format(...)]];
+```

@@ -1,0 +1,48 @@
+---
+title: "Input Text Boxes"
+description: "Documentation for Input Text Boxes."
+published: true
+toc:
+  visible: true
+---
+ImHex contains a number of different input text boxes that expect different input. This page describes their functionality.
+
+<DocumentedImage src="/assets/imhex/common/input-text-boxes/input-fields.png" alt="Input fields as seen in ImHex" caption="Input fields as seen in ImHex" />
+
+<div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+
+<InputTypeCard title="Mathematical Input" image="/assets/imhex/common/input-text-boxes/mathematical-input.png" alt="Mathematical input">
+
+This field expects a mathematical expression such as `-1234.5`, `0xABCD`, `5 + 7`, or `log(e) / 2`. Hexadecimal values must be prefixed with `0x`.
+
+</InputTypeCard>
+
+<InputTypeCard title="Numerical Input" image="/assets/imhex/common/input-text-boxes/numerical-input.png" alt="Numerical input">
+
+This field expects a floating point, decimal, or hexadecimal number.
+
+</InputTypeCard>
+
+<InputTypeCard title="Binary Pattern Input" image="/assets/imhex/common/input-text-boxes/binary-pattern-input.png" alt="Binary pattern input">
+
+This field expects a binary pattern such as `0F ?? A?`. The characters 0 through 9 and A through F specify a fixed nibble, while a question mark specifies a wildcard. See [Binary Pattern](/imhex/common/binary-pattern) for details.
+
+</InputTypeCard>
+
+<InputTypeCard title="Regex Input" image="/assets/imhex/common/input-text-boxes/regex-input.png" alt="Regex input">
+
+This field expects a regular expression. See the [regular expression cheatsheet](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Cheatsheet) for details.
+
+</InputTypeCard>
+
+<InputTypeCard title="Text Input" image="/assets/imhex/common/input-text-boxes/text-input.png" alt="Text input">
+
+This field accepts any valid UTF-8 string without special formatting.
+
+</InputTypeCard>
+
+</div>
+
+### Sliders
+
+Sliders can be modified by simply sliding around the drag bar or by CTRL-Clicking on it and using it as a regular input text box.
